@@ -1,0 +1,29 @@
+name: Build WebClient
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths:
+      - flutter/**
+jobs:
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+      - name: Build Web
+        run: |
+          cd flutter
+          flutter clean
+          flutter pub get
+          flutter build web --release
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webclient
+          path: flutter/build/web
